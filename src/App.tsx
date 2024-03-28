@@ -1,7 +1,12 @@
 import "./App.css";
+import { ChatGPTBody } from "./components/ChatGPTBody";
 
 function App() {
-  return <div>hello chatgpt</div>;
+  return (
+    <div>
+      <ChatGPTBody />
+    </div>
+  );
 }
 
 export default App;
