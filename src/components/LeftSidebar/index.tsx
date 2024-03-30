@@ -4,11 +4,12 @@ import "./index.css";
 
 interface ILeftSidebarProps {
   apiKey: string;
-  onAnswerChange: (data: IChatGPTAnswer[]) => void;
+  chatCache: IChatList[];
+  onAnswerChange: (data: IChatGPTAnswer[], timestamp: number) => void;
   onApiChange: (apiKey: string) => void;
 }
 
-interface IChatList {
+export interface IChatList {
   name: string;
   chatList: IChatGPTAnswer[];
   timestamp: number;
@@ -16,62 +17,32 @@ interface IChatList {
 
 export const LeftSidebar: FC<ILeftSidebarProps> = ({
   apiKey,
+  chatCache,
   onAnswerChange,
   onApiChange,
 }) => {
   const [currentTimestamp, setCurrentTimestamp] = useState(0);
-  const historyChatList: IChatList[] = [
-    {
-      name: "你好",
-      chatList: [
-        {
-          role: "user",
-          content: "你好",
-        },
-        {
-          role: "assistant",
-          content: "你好！有什么我可以帮助你的吗?",
-        },
-      ],
-      timestamp: 1711765333087,
-    },
-    {
-      name: "深圳有几个火车站",
-      chatList: [
-        {
-          role: "user",
-          content: "深圳有几个火车站",
-        },
-        {
-          role: "assistant",
-          content:
-            "深圳是一个快速发展的城市，车站数量可能会不断增加，但是截止到我最后更新的时间2022年，深圳地铁的车站数量约为75个。这些车站建造的时间各不相同，因为深圳地铁的建设是分阶段进行的。深圳地铁的第一条线路于2004年12月28日开通，随后陆续开通了多条线路和分支线路，因此车站的建造时间也从2004年开始，但具体的时间会因为不同的线路和站点而有所不同。如果你需要详细的车站建造时间信息，建议查阅深圳地铁官方网站或相关资料。",
-        },
-      ],
-      timestamp: 1711592426427,
-    },
-  ];
 
   const todayList = useMemo(() => {
-    return historyChatList.filter(
+    return chatCache.filter(
       (item) => Date.now() - item.timestamp < 24 * 60 * 60 * 1000
     );
-  }, [historyChatList]);
+  }, [chatCache]);
 
   const lastWeekList = useMemo(() => {
-    return historyChatList.filter(
+    return chatCache.filter(
       (item) =>
         Date.now() - item.timestamp < 24 * 60 * 60 * 1000 * 7 &&
         Date.now() - item.timestamp > 24 * 60 * 60 * 1000
     );
-  }, [historyChatList]);
+  }, [chatCache]);
 
   return (
     <div className="leftSidebar">
       <div
         className="leftSidebar_newChat"
         onClick={() => {
-          onAnswerChange([]);
+          onAnswerChange([], 0);
           setCurrentTimestamp(0);
         }}
       >
@@ -90,7 +61,7 @@ export const LeftSidebar: FC<ILeftSidebarProps> = ({
                       : ""
                   }`}
                   onClick={() => {
-                    onAnswerChange(item.chatList);
+                    onAnswerChange(item.chatList, item.timestamp);
                     setCurrentTimestamp(item.timestamp);
                   }}
                 >
@@ -112,7 +83,7 @@ export const LeftSidebar: FC<ILeftSidebarProps> = ({
                       : ""
                   }`}
                   onClick={() => {
-                    onAnswerChange(item.chatList);
+                    onAnswerChange(item.chatList, item.timestamp);
                     setCurrentTimestamp(item.timestamp);
                   }}
                 >

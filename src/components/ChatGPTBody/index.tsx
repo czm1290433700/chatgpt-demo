@@ -1,5 +1,6 @@
 import { default as LLMRequest } from "llm-request";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { IChatList } from "../LeftSidebar";
 import "./index.css";
 
 export interface IChatGPTAnswer {
@@ -10,9 +11,16 @@ export interface IChatGPTAnswer {
 interface IChatGPTBodyProps {
   historyChat: IChatGPTAnswer[];
   apiKey: string;
+  timestamp: number;
+  onChange: (list: IChatList[]) => void;
 }
 
-export const ChatGPTBody: FC<IChatGPTBodyProps> = ({ historyChat, apiKey }) => {
+export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
+  historyChat,
+  apiKey,
+  timestamp,
+  onChange,
+}) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const [currentChat, setCurrentChat] = useState<IChatGPTAnswer[]>([]);
@@ -57,7 +65,7 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({ historyChat, apiKey }) => {
         }
       }
     );
-    setCurrentChat([
+    const newChatList: IChatGPTAnswer[] = [
       ...currentChat,
       {
         role: "user",
@@ -67,8 +75,42 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({ historyChat, apiKey }) => {
         role: "assistant",
         content: result,
       },
-    ]);
+    ];
+    setCurrentChat(newChatList);
     setAnswer("");
+    // 缓存当前记录
+    const chatCache: IChatList[] = JSON.parse(
+      localStorage.getItem("chatgpt_history_chat") || "[]"
+    );
+    if (timestamp) {
+      // 历史存量的变更
+      const chatIndex = chatCache.findIndex(
+        (item) => item.timestamp === timestamp
+      );
+      if (chatIndex !== -1) {
+        // 历史存量只更新list
+        chatCache.splice(chatIndex, 1, {
+          ...chatCache[chatIndex],
+          chatList: newChatList,
+        });
+      } else {
+        // index不存在，走新增场景
+        chatCache.push({
+          name: currentQuestion,
+          chatList: newChatList,
+          timestamp: new Date().getTime(),
+        });
+      }
+    } else {
+      // 无时间戳新建
+      chatCache.push({
+        name: currentQuestion,
+        chatList: newChatList,
+        timestamp: new Date().getTime(),
+      });
+    }
+    onChange(chatCache);
+    localStorage.setItem("chatgpt_history_chat", JSON.stringify(chatCache));
   };
 
   const hasChat = useMemo(() => {
