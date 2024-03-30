@@ -68,7 +68,15 @@ export const LeftSidebar: FC<ILeftSidebarProps> = ({
 
   return (
     <div className="leftSidebar">
-      <div className="leftSidebar_newChat">New chat</div>
+      <div
+        className="leftSidebar_newChat"
+        onClick={() => {
+          onAnswerChange([]);
+          setCurrentTimestamp(0);
+        }}
+      >
+        New chat
+      </div>
       <div className="leftSidebar_history">
         {todayList.length > 0 && (
           <div className="leftSidebar_historyArea">

@@ -25,6 +25,8 @@
 
 .chatgptBody_content {
   padding: 30px;
+  height: calc(100vh - 215px);
+  overflow: auto;
 }
 
 .chatgptBody_user {
@@ -64,8 +66,13 @@
 
 .chatgptBody_submit {
   position: absolute;
-  color: rgb(128, 128, 128);
+  color: blue;
   bottom: 27px;
   right: 20px;
   cursor: pointer;
+}
+
+.chatgptBody_disabled {
+  color: rgb(128, 128, 128);
+  cursor: not-allowed;
 }
