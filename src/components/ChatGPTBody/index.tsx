@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import "./index.css";
 
 export interface IChatGPTAnswer {
@@ -6,33 +6,31 @@ export interface IChatGPTAnswer {
   content: string;
 }
 
-export const ChatGPTBody = () => {
-  const [historyChat, setHistoryChat] = useState<IChatGPTAnswer[]>([
-    {
-      role: "user",
-      content: "你好",
-    },
-    {
-      role: "assistant",
-      content: "你好！有什么我可以帮助你的吗?",
-    },
-  ]);
+interface IChatGPTBodyProps {
+  historyChat: IChatGPTAnswer[];
+  apiKey: string;
+}
 
+export const ChatGPTBody: FC<IChatGPTBodyProps> = ({ historyChat, apiKey }) => {
   return (
-    <div>
+    <div className="chatgptBody">
       <h1 className="chatgptBody_h1">ChatGPT 3.5</h1>
-      <div className="chatgptBody_content">
-        {historyChat.map((item) => {
-          return (
-            <div className="chagptBody_item">
-              <p className="chatgptBody_user">
-                {item.role === "user" ? "You" : "ChatGPT"}
-              </p>
-              <div>{item.content}</div>
-            </div>
-          );
-        })}
-      </div>
+      {historyChat && historyChat.length > 0 ? (
+        <div className="chatgptBody_content">
+          {historyChat.map((item) => {
+            return (
+              <div className="chagptBody_item">
+                <p className="chatgptBody_user">
+                  {item.role === "user" ? "You" : "ChatGPT"}
+                </p>
+                <div className="chatgptBody_answer">{item.content}</div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="chatgptBody_default">How can I help you today?</div>
+      )}
       <div className="chatgptBody_bottom">
         <div className="chatgptBody_bottomArea">
           <textarea

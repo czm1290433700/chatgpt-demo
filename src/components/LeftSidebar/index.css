@@ -1,0 +1,78 @@
+.leftSidebar {
+  width: 250px;
+  height: 100vh;
+  background: rgb(0, 0, 0, 0.03);
+}
+
+.leftSidebar_newChat {
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.leftSidebar_newChat:hover {
+  background-color: rgb(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.leftSidebar_history {
+  height: calc(100vh - 145px);
+  overflow: auto;
+}
+
+.leftSidebar_historyArea {
+  margin-bottom: 10px;
+}
+
+.leftSidebar_title {
+  color: rgb(0, 0, 0, 0.3);
+  font-weight: bold;
+  font-size: 12px;
+  padding: 10px;
+  margin: 0 10px;
+}
+
+.leftSidebar_historyItem {
+  font-size: 14px;
+  padding: 10px;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.leftSidebar_historyItem:hover {
+  background-color: rgb(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.leftSidebar_activeHistoryItem {
+  background-color: rgb(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.leftSidebar_bottom {
+  position: fixed;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  bottom: 25px;
+}
+
+.leftSidebar_apiKeyTitle {
+  color: rgb(0, 0, 0, 0.3);
+  font-weight: bold;
+  font-size: 12px;
+  padding: 10px;
+  margin: 0 10px;
+  width: 100%;
+  padding-left: 50px;
+}
+
+.leftSidebar_input {
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+}

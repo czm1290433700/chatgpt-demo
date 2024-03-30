@@ -1,5 +1,22 @@
+.chatgptBody {
+  width: calc(100vw - 250px);
+  height: calc(100vh - 100px);
+  box-sizing: border-box;
+}
+
 .chatgptBody_h1 {
   font-size: 20px;
+  padding: 0 20px;
+}
+
+.chatgptBody_default {
+  width: 100%;
+  height: calc(100vh - 155px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
 }
 
 .chagptBody_item {
@@ -15,13 +32,17 @@
   font-weight: 600;
 }
 
+.chatgptBody_answer {
+  line-height: 28px;
+}
+
 .chatgptBody_bottom {
   position: fixed;
   bottom: 0;
   display: flex;
   justify-content: center;
-  width: 100%;
-  padding: 20px 40px;
+  width: calc(100vw - 250px);
+  padding: 20px 20px;
   box-sizing: border-box;
 }
 
