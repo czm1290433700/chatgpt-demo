@@ -1,6 +1,7 @@
 import { default as LLMRequest } from "llm-request";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { IChatList } from "../LeftSidebar";
+import { MarkdownParser } from "../MarkdownParser";
 import "./index.css";
 
 export interface IChatGPTAnswer {
@@ -129,7 +130,7 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
                 <p className="chatgptBody_user">
                   {item.role === "user" ? "You" : "ChatGPT"}
                 </p>
-                <div className="chatgptBody_answer">{item.content}</div>
+                <MarkdownParser answer={item.content} />
               </div>
             );
           })}
@@ -137,7 +138,7 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
           {answer && (
             <div className="chagptBody_item">
               <p className="chatgptBody_user">ChatGPT</p>
-              <div className="chatgptBody_answer">{answer}</div>
+              <MarkdownParser answer={answer} />
             </div>
           )}
         </div>

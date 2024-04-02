@@ -34,10 +34,6 @@
   font-weight: 600;
 }
 
-.chatgptBody_answer {
-  line-height: 28px;
-}
-
 .chatgptBody_bottom {
   position: fixed;
   bottom: 0;
