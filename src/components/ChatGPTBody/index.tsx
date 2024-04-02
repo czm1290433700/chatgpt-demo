@@ -2,6 +2,8 @@ import { default as LLMRequest } from "llm-request";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { IChatList } from "../LeftSidebar";
 import { MarkdownParser } from "../MarkdownParser";
+import hljs from "highlight.js";
+import "highlight.js/styles/default.css";
 import "./index.css";
 
 export interface IChatGPTAnswer {
@@ -31,6 +33,10 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
   useEffect(() => {
     setCurrentChat(historyChat);
   }, [historyChat]);
+
+  useEffect(() => {
+    hljs.highlightAll();
+  }, [currentChat]);
 
   const submit = async (currentQuestion: string) => {
     const LLMRequestEntity = new LLMRequest(apiKey);

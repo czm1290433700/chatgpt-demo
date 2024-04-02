@@ -7,8 +7,8 @@ interface IMarkdownParserProps {
 
 export const MarkdownParser: FC<IMarkdownParserProps> = ({ answer }) => {
   const formatCode = useMemo(() => {
-    // 将\n替换为<br />
-    let formattedStr = answer.replace(/\n/g, "<br />");
+    // 将\n替换为<br />, 代码块前后会置两个换行，可以去掉
+    let formattedStr = answer.replaceAll("\n\n", "").replace(/\n/g, "<br />");
 
     // 查找以```开始并以```结束的代码块，并提取语言标识和代码内容
     const codeBlockPattern = /```([\s\S]+?)```/g;
@@ -16,12 +16,12 @@ export const MarkdownParser: FC<IMarkdownParserProps> = ({ answer }) => {
     let match;
     while ((match = codeBlockPattern.exec(formattedStr)) !== null) {
       const language = match[1].split("<br />")[0];
-      const codeContent = match[1].split("<br />").slice(1).join("<br />");
+      const codeContent = match[1].split("<br />").slice(1).join("\n");
 
       // 替换当前代码块为带有语言标识和代码内容的新格式
       const formattedCode = `<div>
-         <div>${language}</div>
-         <code>${codeContent.trim()}</code>
+         <div class="topArea">${language}</div>
+         <pre class="codeArea"><code class=${`language-${language}`}>${codeContent.trim()}</code></pre>
        </div>`;
       formattedStr =
         formattedStr.slice(0, match.index) +
