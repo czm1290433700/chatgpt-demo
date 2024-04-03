@@ -1,4 +1,5 @@
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
+import ClipboardJS from "clipboard";
 import "./index.css";
 
 interface IMarkdownParserProps {
@@ -6,6 +7,13 @@ interface IMarkdownParserProps {
 }
 
 export const MarkdownParser: FC<IMarkdownParserProps> = ({ answer }) => {
+  useEffect(() => {
+    const clipboard = new ClipboardJS(".copy");
+    return () => {
+      clipboard.destroy();
+    };
+  }, []);
+
   const formatCode = useMemo(() => {
     // 将\n替换为<br />, 代码块前后会置两个换行，可以去掉
     let formattedStr = answer.replaceAll("\n\n", "").replace(/\n/g, "<br />");
@@ -19,9 +27,13 @@ export const MarkdownParser: FC<IMarkdownParserProps> = ({ answer }) => {
       const codeContent = match[1].split("<br />").slice(1).join("\n");
 
       // 替换当前代码块为带有语言标识和代码内容的新格式
-      const formattedCode = `<div>
-         <div class="topArea">${language}</div>
-         <pre class="codeArea"><code class=${`language-${language}`}>${codeContent.trim()}</code></pre>
+      const formattedCode = `
+      <div>
+        <div class="topArea">
+            <span>${language}</span>
+            <span class="copy" data-clipboard-text="${codeContent.trim()}">copy code</span>
+        </div>
+        <pre class="codeArea"><code class=${`language-${language}`}>${codeContent.trim()}</code></pre>
        </div>`;
       formattedStr =
         formattedStr.slice(0, match.index) +
