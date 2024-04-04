@@ -29,10 +29,13 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
   const [currentChat, setCurrentChat] = useState<IChatGPTAnswer[]>([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [systemPrompt, setSystemPrompt] = useState("");
+  const [currentTimestamp, setCurrentTimestamp] = useState(timestamp);
 
   useEffect(() => {
     setCurrentChat(historyChat);
-  }, [historyChat]);
+    setCurrentTimestamp(timestamp);
+  }, [historyChat, timestamp]);
 
   useEffect(() => {
     hljs.highlightAll();
@@ -52,6 +55,14 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
       {
         model: "gpt-3.5-turbo",
         messages: [
+          ...(systemPrompt
+            ? ([
+                {
+                  role: "system",
+                  content: systemPrompt,
+                },
+              ] as IChatGPTAnswer[])
+            : []),
           ...currentChat,
           {
             role: "user",
@@ -89,10 +100,10 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
     const chatCache: IChatList[] = JSON.parse(
       localStorage.getItem("chatgpt_history_chat") || "[]"
     );
-    if (timestamp) {
+    if (currentTimestamp) {
       // 历史存量的变更
       const chatIndex = chatCache.findIndex(
-        (item) => item.timestamp === timestamp
+        (item) => item.timestamp === currentTimestamp
       );
       if (chatIndex !== -1) {
         // 历史存量只更新list
@@ -110,10 +121,12 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
       }
     } else {
       // 无时间戳新建
+      const time = new Date().getTime();
+      setCurrentTimestamp(time);
       chatCache.push({
         name: currentQuestion,
         chatList: newChatList,
-        timestamp: new Date().getTime(),
+        timestamp: time,
       });
     }
     onChange(chatCache);
@@ -149,7 +162,22 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
           )}
         </div>
       ) : (
-        <div className="chatgptBody_default">How can I help you today?</div>
+        <div className="chatgptBody_default">
+          <div className="chatgptBody_default_title">
+            How can I help you today?
+          </div>
+          <div className="chatgptBody_default_system_prompt">
+            <div className="chatgptBody_default_label">System Prompt</div>
+            <textarea
+              className="chatgptBody_default_textarea"
+              placeholder="Fill in System Prompt..."
+              value={systemPrompt}
+              onChange={(event) => {
+                setSystemPrompt(event.target.value);
+              }}
+            ></textarea>
+          </div>
+        </div>
       )}
       <div className="chatgptBody_bottom">
         <div className="chatgptBody_bottomArea">
