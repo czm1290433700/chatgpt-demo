@@ -1,5 +1,6 @@
 import { FC, useMemo, useState } from "react";
 import { IChatGPTAnswer } from "../ChatGPTBody";
+import { UploadModal } from "../UploadModal";
 import "./index.css";
 
 interface ILeftSidebarProps {
@@ -22,6 +23,7 @@ export const LeftSidebar: FC<ILeftSidebarProps> = ({
   onApiChange,
 }) => {
   const [currentTimestamp, setCurrentTimestamp] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const todayList = useMemo(() => {
     return chatCache.filter(
@@ -39,6 +41,14 @@ export const LeftSidebar: FC<ILeftSidebarProps> = ({
 
   return (
     <div className="leftSidebar">
+      <div
+        className="leftSidebar_uploadDb"
+        onClick={() => {
+          setModalVisible(true);
+        }}
+      >
+        上传知识库
+      </div>
       <div
         className="leftSidebar_newChat"
         onClick={() => {
@@ -107,6 +117,12 @@ export const LeftSidebar: FC<ILeftSidebarProps> = ({
           }}
         ></input>
       </div>
+      <UploadModal
+        visible={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+        }}
+      ></UploadModal>
     </div>
   );
 };
