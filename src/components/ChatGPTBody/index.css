@@ -4,9 +4,27 @@
   box-sizing: border-box;
 }
 
+.chatgptBody_top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .chatgptBody_h1 {
   font-size: 20px;
   padding: 0 20px;
+}
+
+.chatgptBody_embeddingsSelectArea {
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.chatgptBody_embeddingsSelectArea_label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 .chatgptBody_default {

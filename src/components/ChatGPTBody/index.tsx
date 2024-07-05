@@ -5,6 +5,8 @@ import { MarkdownParser } from "../MarkdownParser";
 import hljs from "highlight.js";
 import "highlight.js/styles/default.css";
 import "./index.css";
+import { Select } from "@douyinfe/semi-ui";
+import useGetCollections from "../UploadModal/hooks/useGetCollections";
 
 export interface IChatGPTAnswer {
   role: "user" | "assistant" | "system";
@@ -31,6 +33,7 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
   const [answer, setAnswer] = useState("");
   const [systemPrompt, setSystemPrompt] = useState("");
   const [currentTimestamp, setCurrentTimestamp] = useState(timestamp);
+  const [collectionName, setCollectionName] = useState('');
 
   useEffect(() => {
     setCurrentChat(historyChat);
@@ -57,11 +60,11 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
         messages: [
           ...(systemPrompt
             ? ([
-                {
-                  role: "system",
-                  content: systemPrompt,
-                },
-              ] as IChatGPTAnswer[])
+              {
+                role: "system",
+                content: systemPrompt,
+              },
+            ] as IChatGPTAnswer[])
             : []),
           ...currentChat,
           {
@@ -138,9 +141,24 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
     return currentChat && currentChat.length > 0;
   }, [currentChat]);
 
+  const collections = useGetCollections();
+
   return (
     <div className="chatgptBody">
-      <h1 className="chatgptBody_h1">ChatGPT 3.5</h1>
+      <div className="chatgptBody_top">
+        <h1 className="chatgptBody_h1">ChatGPT 3.5</h1>
+        <div className="chatgptBody_embeddingsSelectArea">
+          <span className="chatgptBody_embeddingsSelectArea_label">向量知识库</span>
+          <Select value={collectionName} onChange={(data) => { setCollectionName(String(data)) }} filter>
+            <Select.Option value={""}>不使用向量知识库</Select.Option>
+            {collections.map((item) => {
+              return (
+                <Select.Option value={item}>{item}</Select.Option>
+              )
+            })}
+          </Select>
+        </div>
+      </div>
       {hasChat ? (
         <div className="chatgptBody_content" ref={contentRef}>
           {currentChat.map((item) => {
@@ -197,9 +215,8 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
             }}
           ></textarea>
           <div
-            className={`chatgptBody_submit ${
-              !question ? "chatgptBody_disabled" : ""
-            }`}
+            className={`chatgptBody_submit ${!question ? "chatgptBody_disabled" : ""
+              }`}
             onClick={() => {
               if (question) {
                 submit(question);
