@@ -1,0 +1,6 @@
+Flask>=2.2.2
+transformers>=4.26.0
+torch>=1.13.1
+chromadb>=0.3.19
+numpy>=1.23.5
+flask-cors>=4.0.1

@@ -4,7 +4,8 @@
   background: rgb(0, 0, 0, 0.03);
 }
 
-.leftSidebar_newChat {
+.leftSidebar_newChat,
+.leftSidebar_uploadDb {
   padding: 10px;
   font-size: 14px;
   font-weight: bold;
@@ -12,7 +13,8 @@
   margin: 10px;
 }
 
-.leftSidebar_newChat:hover {
+.leftSidebar_newChat:hover,
+.leftSidebar_uploadDb:hover {
   background-color: rgb(0, 0, 0, 0.1);
   border-radius: 10px;
 }
