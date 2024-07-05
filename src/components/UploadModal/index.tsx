@@ -11,7 +11,7 @@ interface IUploadModalProps {
 const { Option } = Form.Select;
 
 export const UploadModal: FC<IUploadModalProps> = ({ visible, onClose }) => {
-  // const fileMap = new Map<string, string>();
+  const fileMap = new Map<string, string>();
 
   const collections = useGetCollections();
 
@@ -25,18 +25,14 @@ export const UploadModal: FC<IUploadModalProps> = ({ visible, onClose }) => {
       }}
       onCancel={onClose}
     >
-      <Form
-        onSubmit={() => {
-          // 预留，提交逻辑
-        }}
-      >
+      <Form>
         <Form.Select
           field="collection"
           label="知识库"
           placeholder="请选择"
           filter
           style={{ width: 300 }}
-          allowCreate={true}
+          allowCreate={true} // 允许创建新知识库
         >
           {collections.map((item, index) => {
             return (
@@ -51,20 +47,20 @@ export const UploadModal: FC<IUploadModalProps> = ({ visible, onClose }) => {
           label="知识库文件(仅支持txt格式)"
           action=""
           multiple
-        // customRequest={({ file, onProgress }) => {
-        //   const reader = new FileReader();
-        //   reader.onload = (e) => {
-        //     if (file.fileInstance?.name) {
-        //       fileMap.set(file.fileInstance?.name, e.target?.result as string);
-        //     }
-        //     onProgress({ total: 100, loaded: 100 });
-        //   };
+          customRequest={({ file, onProgress }) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              if (file.fileInstance?.name) {
+                fileMap.set(file.fileInstance?.name, e.target?.result as string);
+              }
+              onProgress({ total: 100, loaded: 100 });
+            };
 
-        //   if (file.fileInstance) {
-        //     reader.readAsText(file.fileInstance);
-        //   }
-        // }}
-        // accept="text/plain"
+            if (file.fileInstance) {
+              reader.readAsText(file.fileInstance);
+            }
+          }}
+          accept="text/plain"
         >
           <Button icon={<IconUpload />} theme="light">
             点击上传
