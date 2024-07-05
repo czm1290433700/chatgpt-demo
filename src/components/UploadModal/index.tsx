@@ -2,6 +2,7 @@ import { IconUpload } from "@douyinfe/semi-icons";
 import { Button, Form, Modal } from "@douyinfe/semi-ui";
 import { FC } from "react";
 import useGetCollections from "./hooks/useGetCollections";
+import { splitTextWithOverlap } from "../../utils";
 
 interface IUploadModalProps {
   visible: boolean;
@@ -11,7 +12,7 @@ interface IUploadModalProps {
 const { Option } = Form.Select;
 
 export const UploadModal: FC<IUploadModalProps> = ({ visible, onClose }) => {
-  const fileMap = new Map<string, string>();
+  const fileMap = new Map<string, string[]>();
 
   const collections = useGetCollections();
 
@@ -51,7 +52,8 @@ export const UploadModal: FC<IUploadModalProps> = ({ visible, onClose }) => {
             const reader = new FileReader();
             reader.onload = (e) => {
               if (file.fileInstance?.name) {
-                fileMap.set(file.fileInstance?.name, e.target?.result as string);
+                const contentArr = splitTextWithOverlap(e.target?.result as string, 20, 5);
+                fileMap.set(file.fileInstance?.name, contentArr);
               }
               onProgress({ total: 100, loaded: 100 });
             };
