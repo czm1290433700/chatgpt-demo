@@ -5,6 +5,9 @@ import { MarkdownParser } from "../MarkdownParser";
 import hljs from "highlight.js";
 import "highlight.js/styles/default.css";
 import "./index.css";
+import { Select } from "@douyinfe/semi-ui";
+import useGetCollections from "../UploadModal/hooks/useGetCollections";
+import axios from "axios";
 
 export interface IChatGPTAnswer {
   role: "user" | "assistant" | "system";
@@ -31,6 +34,7 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
   const [answer, setAnswer] = useState("");
   const [systemPrompt, setSystemPrompt] = useState("");
   const [currentTimestamp, setCurrentTimestamp] = useState(timestamp);
+  const [collectionName, setCollectionName] = useState("");
 
   useEffect(() => {
     setCurrentChat(historyChat);
@@ -42,6 +46,22 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
   }, [currentChat]);
 
   const submit = async (currentQuestion: string) => {
+    let similarText = "";
+    if (collectionName) {
+      const { data } = await axios.post(
+        "http://127.0.0.1:5000/query_similar_text",
+        {
+          texts: [currentQuestion],
+          results_num: 5,
+          collection_name: collectionName,
+        }
+      );
+      similarText = `这个问题有如下前置信息，${data.data.documents[0]
+        ?.map((item: any) => {
+          return `"${item}"`;
+        })
+        .join(",")}, 请根据前置信息作答`;
+    }
     const LLMRequestEntity = new LLMRequest(apiKey);
     let result = "";
     setCurrentChat([
@@ -64,11 +84,28 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
               ] as IChatGPTAnswer[])
             : []),
           ...currentChat,
-          {
-            role: "user",
-            content: currentQuestion,
-          },
-        ],
+          // 补充相似信息作为前置条件
+          ...(similarText
+            ? [
+                {
+                  role: "user",
+                  content: similarText,
+                },
+                {
+                  role: "user",
+                  content: currentQuestion,
+                },
+              ]
+            : [
+                {
+                  role: "user",
+                  content: currentQuestion,
+                },
+              ]),
+        ] as {
+          role: "user" | "assistant" | "system";
+          content: string;
+        }[],
         stream: true,
       },
       (res) => {
@@ -138,9 +175,30 @@ export const ChatGPTBody: FC<IChatGPTBodyProps> = ({
     return currentChat && currentChat.length > 0;
   }, [currentChat]);
 
+  const collections = useGetCollections();
+
   return (
     <div className="chatgptBody">
-      <h1 className="chatgptBody_h1">ChatGPT 3.5</h1>
+      <div className="chatgptBody_top">
+        <h1 className="chatgptBody_h1">ChatGPT 3.5</h1>
+        <div className="chatgptBody_embeddingsSelectArea">
+          <span className="chatgptBody_embeddingsSelectArea_label">
+            向量知识库
+          </span>
+          <Select
+            value={collectionName}
+            onChange={(data) => {
+              setCollectionName(String(data));
+            }}
+            filter
+          >
+            <Select.Option value={""}>不使用向量知识库</Select.Option>
+            {collections.map((item) => {
+              return <Select.Option value={item}>{item}</Select.Option>;
+            })}
+          </Select>
+        </div>
+      </div>
       {hasChat ? (
         <div className="chatgptBody_content" ref={contentRef}>
           {currentChat.map((item) => {
