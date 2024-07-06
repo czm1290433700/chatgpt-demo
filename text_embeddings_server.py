@@ -21,7 +21,7 @@ class EmbeddingFunction(EmbeddingFunction):
             embeddings = self.model(**inputs).pooler_output
         return  embeddings.detach().numpy().tolist()
 
-chroma_client = chromadb.PersistentClient(path="/chroma_data")
+chroma_client = chromadb.PersistentClient(path="./chroma_data")
 
 @app.route('/store_text_embeddings', methods=['POST'])
 def store_text_embeddings():
